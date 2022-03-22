@@ -1,102 +1,57 @@
 
-//'test9.csv,iIIJUWLbpTUcJt,3,b9be0a19005f4219d8ef8e73f13fbe3d'
-function analizarData(data){
-    let elementsCsv = [];
-    let elemento = "";
-    console.log("data",data);
-    for ( let i = 0 ; i< data.length ; i++ ){
-        
-        if (data[i]==="," || i===data.length-1){
-            
-            if(i===data.length-1){
-                elemento+=data[i];
-            }
-            if(elemento.endsWith("\r")){
-                elemento=elemento.substring(0, elemento.length - 1);
-            }
-            elementsCsv.push(elemento);
-            
-            elemento="";
-            continue
-        }
-        
-        elemento+=data[i];
-       
-
-    }
-    
-    if( elementsCsv.length !==4){
-        return {
-            isValid:false,
-        };
-    }
-    
-    return {
-        isValid:true,
-        elementsCsv
-    }
-
-    
-}
-/*
-[
-   {
-      "file": "file1.csv",
-      "lines": [
-         {
-            "text" :"RgTya",
-            "number": 64075909,
-            "hex": "70ad29aacf0b690b0467fe2b2767f765"
-         },
-         . . .
-      ]
-   }
-]
-
-*/
-
 const cleanData = ( data ) =>{
-    
-    let cleaned ="" ;
-    let analizar="";
+ 
 
     let lines = []
-    let filename="";
+    
    
+    
+    let datosCsvRow = [];
+    let datoCsvRow="";
     for(let i =0 ; i< data.length ; i++ ){
+        if(data[i]!=="\n" && data[i]!==","){
+            datoCsvRow+=data[i]
+
+        }
+        if( data[i]==="," ){
+            datosCsvRow.push(datoCsvRow);
+            datoCsvRow="";
+        }
         
         if(data[i]==="\n" || i===data.length-1){
-            if(i===data.length-1){
-                analizar+=data[i];
-            }
-            const { isValid ,elementsCsv} = analizarData(analizar);
-           
+            datosCsvRow.push(datoCsvRow);
+            datoCsvRow="";
             
-            if( isValid ){
-                filename=elementsCsv[0]
-              
+            
+
+            if ( datosCsvRow.length===4 ){
                 lines.push({
-                    text: elementsCsv[1],
-                    number:elementsCsv[2],
-                    hex :elementsCsv[3]
+                    text: datosCsvRow[1],
+                    number:datosCsvRow[2],
+                    hex :datosCsvRow[3]
                 })
-                cleaned+=analizar
+                
             }
-
-            analizar="";
-            continue
+            datosCsvRow=[]
+            
         }
+            
 
-        analizar+=data[i];
     }
-    lines.splice(0,1)
+   
+    lines.shift();
+    if(lines.length>0){
+        return {
+            valid:true,
+            lines,
+        };
+
+    }
+
+    return {
+        valid:false,
+    }
     
-    let objeto = {
-        filename,
-        lines,
-    }
-
-    return objeto;
 }
 /*
 file: 'file,text,number,hex\r\n' +

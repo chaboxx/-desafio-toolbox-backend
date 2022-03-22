@@ -29,6 +29,7 @@ const domainCsv = async( req,res ) =>{
                     msg :"No existe un archivo con ese nombbre"
                 })
             }else{
+                
                 const resp = await axios.get(`https://echo-serv.tbxnet.com/v1/secret/file/${fileName}`,{
                     headers:{
                         "Authorization" : "Bearer aSuperSecretKey",
@@ -36,15 +37,20 @@ const domainCsv = async( req,res ) =>{
                     }
                 })
                 const file = resp.data;
-                const cleaned = cleanData(file);
-                if(cleaned.lines.length>0){
-                    data.push(cleaned)
+                const {valid,lines} = cleanData(file);
+                if(valid){
+                    data.push({
+                        file:fileName,
+                        lines,
+                    })
+                    return res.status(200).json({
+                        ok:true,
+                        data,
+                    })
     
                 }
-                
-                return res.status(200).json({
-                    ok:true,
-                    data,
+                return res.status(400).json({
+                    ok:false,
                 })
                 
             }
@@ -64,14 +70,18 @@ const domainCsv = async( req,res ) =>{
                     }
                 })
                 const file = resp.data;
-                const cleaned = cleanData(file);
-                if(cleaned.lines.length>0){
-                    data.push(cleaned)
-    
+               
+                const {valid,lines} = cleanData(file);
+                
+                if(valid){
+                    data.push({
+                        file : files[i],
+                        lines,
+                    })
+
                 }
                 
             } catch (error) {
-
                 console.log("La Descarga del archivo fallo");
             }
         }

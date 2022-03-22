@@ -19,6 +19,7 @@ describe("Tool-Box Desafio",()=>{
     describe("GET /domain-csv",()=>{
         it("Deberia obtenerse la informacion de todos los archivos",
             (done)=>{
+                
                 chai.request(servidor.app)
                     .get("/domain-csv")
                     .set('content-type', 'application/json')
@@ -32,9 +33,9 @@ describe("Tool-Box Desafio",()=>{
                         }
 
                         done();
-                    }).timeout(5000)
+                    })
             }
-        )
+        ).timeout(5000)
     })
 
     describe("GET /domain-csv",()=>{
@@ -59,9 +60,8 @@ describe("Tool-Box Desafio",()=>{
                         done();
                     })
             }
-        )
+        ).timeout(5000)
     })
-
 
     describe("GET /files/list",()=>{
         it("Deberia obtenerse el nombre de todos los archivos (7)",
@@ -79,7 +79,7 @@ describe("Tool-Box Desafio",()=>{
                         done();
                     })
             }
-        )
+        ).timeout(5000)
     })
 
     
