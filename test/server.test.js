@@ -16,12 +16,12 @@ chai.use(chaiHttp);
 describe("Tool-Box Desafio",()=>{
 
     //GET ALL FILES INFORMATION
-    describe("GET /domain-csv",()=>{
+    describe("GET /files/data",()=>{
         it("Deberia obtenerse la informacion de todos los archivos",
             (done)=>{
                 
                 chai.request(servidor.app)
-                    .get("/domain-csv")
+                    .get("/files/data")
                     .set('content-type', 'application/json')
                     .end((err,response)=>{
                         response.should.have.status(200);
@@ -38,11 +38,11 @@ describe("Tool-Box Desafio",()=>{
         ).timeout(5000)
     })
 
-    describe("GET /domain-csv",()=>{
+    describe("GET /files/data?",()=>{
         it("Deberia obtenerse la informacion un archivo por nombre",
             (done)=>{
                 chai.request(servidor.app)
-                    .get("/domain-csv")
+                    .get("/files/data")
                     .set('content-type', 'application/json')
                     .query({
                         fileName: "test9.csv"

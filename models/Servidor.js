@@ -1,8 +1,7 @@
 const express = require("express");
 
-const { obtenerArchivo } = require("../controllers/archivos");
-const { isUser } = require("../middlewares/isUser");
-const { domainCsv } = require("../controllers/domainCsv");
+
+const { getFilesData } = require("../controllers/getFilesData");
 const { getArchivosList } = require("../controllers/getArchivosList");
 
 
@@ -25,13 +24,10 @@ class Servidor {
     rutas(){
         
 
-        //OBTENER LOS ARCHIVOS
-        this.app.get("/",[isUser],obtenerArchivo)
+        //OBTENER INFO DE TODOS LOS ARCHIVOS O POR QUERY LA DE UN SOLO ARCHIVO
+        this.app.get("/files/data",getFilesData)
 
-        this.app.use("/archivos", express.static("./archivos"))
-        
-        this.app.get("/domain-csv",domainCsv)
-
+        //ARCHIVOS DISPONIBLES DE LA API EXTERNA
         this.app.get("/files/list", getArchivosList)
     }
 

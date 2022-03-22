@@ -1,10 +1,10 @@
 
 const { default: axios } = require("axios");
-const fs  = require("fs");
+
 const { cleanData } = require("../helpers/cleanData");
 
-
-const domainCsv = async( req,res ) =>{
+// "/files/data"
+const getFilesData = async( req,res ) =>{
 
    
     try {
@@ -59,32 +59,40 @@ const domainCsv = async( req,res ) =>{
 
         
 
-        const data = [];
+       
+        const promesas = [];
         for ( let i=0 ; i<files.length ; i ++){
     
-            try {
-                const resp = await axios.get(`https://echo-serv.tbxnet.com/v1/secret/file/${files[i]}`,{
-                    headers:{
-                        "Authorization" : "Bearer aSuperSecretKey",
-                        
-                    }
-                })
-                const file = resp.data;
-               
-                const {valid,lines} = cleanData(file);
+            
+            const resp = axios.get(`https://echo-serv.tbxnet.com/v1/secret/file/${files[i]}`,{
+                headers:{
+                    "Authorization" : "Bearer aSuperSecretKey",
+                    
+                }
+            })
+            promesas.push(resp)
                 
+        }
+           
+        const values = await Promise.allSettled(promesas);
+        console.log("values",values);
+        const data = [];
+        for(let i=0;i<values.length;i++){
+            if(values[i].status==="fulfilled"){
+                const {valid,lines} = cleanData(values[i].value.data);
                 if(valid){
                     data.push({
                         file : files[i],
                         lines,
                     })
-
+        
                 }
-                
-            } catch (error) {
-                console.log("La Descarga del archivo fallo");
+            }else{
+                console.log('Error en la descarga del archivo');
+
             }
         }
+        
         return res.json({
             ok:true,
             data
@@ -102,5 +110,5 @@ const domainCsv = async( req,res ) =>{
 }
 
 module.exports = {
-    domainCsv,
+    getFilesData,
 }
